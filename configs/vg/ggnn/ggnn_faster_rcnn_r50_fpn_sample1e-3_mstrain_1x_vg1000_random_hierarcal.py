@@ -5,10 +5,18 @@ _base_ = [
     '../../_base_/default_runtime.py'
 ]
 model = dict(
-    backbone=dict(frozen_stages=4),
-    roi_head=dict(
-        bbox_head=dict(num_classes=1000, 
-        ggnn_config=dict(initweight_path="./data/vg/init_weights_norm.pt"))))
+    backbone=dict(
+        frozen_stages=4),
+        roi_head=dict(
+            bbox_head=dict(
+            num_classes=1000,
+            ggnn_config=dict(
+                adjecent_path="./data/vg/adjecent_attr.pt",
+                initweight_path="./data/vg/init_weights_random.pt"
+            )
+        )
+    )
+)
 test_cfg = dict(
     rcnn=dict(
         score_thr=0.0001,
@@ -30,9 +38,10 @@ train_pipeline = [
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels']),
 ]
-data = dict(samples_per_gpu=2, train=dict(dataset=dict(pipeline=train_pipeline)))
-work_dir = "exps/vg/ggnnr50_norm"
+data = dict(samples_per_gpu=1, train=dict(dataset=dict(pipeline=train_pipeline)))
+#work_dir = "exps/vg/ggnnr50_random"
+work_dir = "exps/vg/ggnnr50_random_hierarcal"
 seed = 0
 gpu_ids = range(0, 1)
 load_from = "exps/vg/r50/latest.pth"
-resume_from = "exps/vg/ggnnr50/latest.pth"
+resume_from = None
