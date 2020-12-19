@@ -49,7 +49,7 @@ class GGNN(nn.Module):
     Mode: SelectNode
     Implementation based on https://arxiv.org/abs/1511.05493
     """
-    def __init__(self, A, fc_out_channels, init_weights, state_dim=10, n_steps=5):
+    def __init__(self, A, fc_out_channels, init_weights, state_dim=256, n_steps=5):
         super(GGNN, self).__init__()
         self.n_steps = n_steps
 
@@ -80,8 +80,6 @@ class CLASS_HEAD(nn.Module):
         self.fc_bins = nn.ModuleList()
         #background bin
         self.fc_bins.append(nn.Linear(cls_last_dim, 2))
-        self.num_bins = gggs_config.num_bins
-        state_dim    = gggs_config.state_dim
         self.num_bins = gggs_config.num_bins
         #forceground bin
         for i in range(self.num_bins-1):

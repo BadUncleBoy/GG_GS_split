@@ -58,9 +58,9 @@ class GGNN(nn.Module):
         #convert input node dimension to state_dim
         self.feature2state_dim_list = nn.ModuleList()
         self.state2feature_dim_list = nn.ModuleList()
+        self.propogator_list        = nn.ModuleList()
         self.last_fc = nn.Linear(state_dim, state_dim)
         # Propogation Model
-        self.propogator_list = nn.ModuleList()
         self.feat_weight = nn.Parameter(torch.ones(len(A), dtype=torch.float32), requires_grad=True)
         for _ in A:
             self.feature2state_dim_list.append(
@@ -95,17 +95,14 @@ class CLASS_HEAD(nn.Module):
         #background bin
         self.fc_bins.append(nn.Linear(cls_last_dim, 2))
         self.num_bins = gggs_config.num_bins
-        state_dim    = gggs_config.state_dim
         #forceground bin
         for i in range(self.num_bins-1):
-            adjecent = torch.load(gggs_config.adjecent_path[i])
-            adjecent = [each.cuda() for each in adjecent]
-            init_weights = torch.load(gggs_config.initweight_path[i])
-            init_weights = [each.cuda() for each in init_weights]
+            adjecent = [each.cuda() for each intorch.load(gggs_config.adjecent_path[i])]
+            init_weights = [each.cuda() for each torch.load(gggs_config.initweight_path[i])]
             self.fc_bins.append(GGNN(A=adjecent,
                                      fc_out_channels=fc_out_channels,
                                      init_weights=init_weights,
-                                     state_dim=state_dim,
+                                     state_dim=gggs_config.state_dim,
                                      n_steps=gggs_config.n_steps))
     def forward(self, feat):
         class_preds = []

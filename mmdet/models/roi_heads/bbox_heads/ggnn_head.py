@@ -62,7 +62,6 @@ class GGNN(nn.Module):
                                     nn.Linear(state_dim, fc_out_channels))
         # Propogation Model
         self.propogator = Propogator(state_dim)
-        self._initialization()
 
     def _initialization(self):
         # nn.init.normal_(self.classifier_weight, 0, 0.01)
@@ -100,10 +99,9 @@ class GGNNBBOXHEAD(SharedFCBBoxHead):
                            init_weights=init_weights, 
                            state_dim=ggnn_config.state_dim,
                            n_steps=ggnn_config.n_steps)
-        print("called")
-        print(self.modules)
     def init_weights(self):
         # 重写权重初始化函数，在GGNN中已经对分类网络进行权重初始化了
+        self.fc_cls._initialization()
         if self.with_reg:
             nn.init.normal_(self.fc_reg.weight, 0, 0.001)
             nn.init.constant_(self.fc_reg.bias, 0)
